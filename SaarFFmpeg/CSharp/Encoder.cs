@@ -18,7 +18,9 @@ namespace Saar.FFmpeg.CSharp {
 
 		public Encoder(AVCodecID codecID) : base(codecID) { }
 
-		public Encoder(AVStream* stream) : base(stream) { }
+        public Encoder(string codecName) : base(codecName) { }
+
+        public Encoder(AVStream* stream) : base(stream) { }
 
 		public abstract bool Encode(Frame frame, Packet outPacket);
 

@@ -35,9 +35,10 @@ namespace Saar.FFmpeg.CSharp {
 			packet->Size = 0;
 		}
 
-		internal void ReleaseNativeBuffer() {
-			FF.av_packet_unref(packet);
-		}
+        internal unsafe void ReleaseNativeBuffer()
+        {
+            FF.av_packet_unref(packet);
+        }
 
 		protected override void Dispose(bool disposing) {
 			if (packet == null) return;

@@ -8,14 +8,16 @@ using Saar.FFmpeg.CSharp;
 namespace SaarFFmpeg.H264Output {
 	class Program {
 		static void Main(string[] args) {
-			var reader = new MediaReader(@"Z:\output.mp4");
+			var reader = new MediaReader(@"a.avi");
 			var decoder = reader.Decoders.OfType<VideoDecoder>().First();
 			var packet = new Packet();
-			using (var writer = new MediaRemuxer(@"Z:\output.h264", decoder)) {
+			using (var writer = new MediaRemuxer(@"v.h264", decoder)) {
 				while (reader.ReadPacket(packet, decoder.StreamIndex)) {
 					writer.Write(packet);
 				}
 			}
+
+            Console.ReadLine();
 		}
 	}
 }

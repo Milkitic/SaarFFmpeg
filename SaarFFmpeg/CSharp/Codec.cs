@@ -32,7 +32,21 @@ namespace Saar.FFmpeg.CSharp {
 			FullName = Marshal.PtrToStringAnsi((IntPtr) codec->LongName) ?? Name;
 		}
 
-		public Codec(AVStream* stream) {
+        public Codec(string codecName, bool encode = true)
+        {
+            if (encode)
+            {
+                codec=GetEncoder(codecName);
+            }
+            else
+            {
+                codec=GetDecoder(codecName);
+            }
+            Name=Marshal.PtrToStringAnsi((IntPtr)codec->Name);
+            FullName=Marshal.PtrToStringAnsi((IntPtr)codec->LongName)??Name;
+        }
+
+        public Codec(AVStream* stream) {
 			this.stream = stream;
 			codecContext = stream->Codec;
 			if (stream->Codec->Codec == null) {
@@ -49,13 +63,27 @@ namespace Saar.FFmpeg.CSharp {
 			return codec;
 		}
 
-		internal static AVCodec* GetEncoder(AVCodecID codecID) {
+        internal static AVCodec* GetDecoder(string codecName)
+        {
+            AVCodec* codec = FF.avcodec_find_decoder_by_name(codecName);
+            if (codec==null) throw new ArgumentException($"未能找到解码器:{codecName}", nameof(codecName));
+            return codec;
+        }
+
+        internal static AVCodec* GetEncoder(AVCodecID codecID) {
 			AVCodec* codec = FF.avcodec_find_encoder(codecID);
 			if (codec == null) throw new ArgumentException($"未能找到编码器:{codecID}", nameof(codecID));
 			return codec;
 		}
 
-		protected override void Dispose(bool disposing) {
+        internal static AVCodec* GetEncoder(string codecName)
+        {
+            AVCodec* codec = FF.avcodec_find_encoder_by_name(codecName);
+            if (codec==null) throw new ArgumentException($"未能找到编码器:{codecName}", nameof(codecName));
+            return codec;
+        }
+
+        protected override void Dispose(bool disposing) {
 			if (codecContext == null) return;
 			FF.avcodec_close(codecContext);
 			codecContext = null;

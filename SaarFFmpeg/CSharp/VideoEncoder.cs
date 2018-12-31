@@ -22,20 +22,34 @@ namespace Saar.FFmpeg.CSharp {
 
 		public override TimeSpan InputTimestamp
 			=> TimeSpan.FromTicks(inputFrames * 10000000 * framePerSecond.Den / framePerSecond.Num);
+        
+        public VideoEncoder(string codecName, VideoFormat format, VideoEncoderParameters encoderParams = null) : base(codecName)
+        {
+            encoderParams=encoderParams??VideoEncoderParameters.Default;
+            if (codec->Type!=AVMediaType.Video)
+                throw new ArgumentException($"{codecName}不是视频格式", nameof(codecName));
 
-		public VideoEncoder(AVCodecID codecID, VideoFormat format, VideoEncoderParameters encoderParams = null) : base(codecID) {
-			encoderParams = encoderParams ?? VideoEncoderParameters.Default;
-			if (codec->Type != AVMediaType.Video)
-				throw new ArgumentException($"{codecID}不是视频格式", nameof(codecID));
+            codecContext=FF.avcodec_alloc_context3(codec);
+            if (codecContext==null) throw new Exception("无法分配编码器上下文");
 
-			codecContext = FF.avcodec_alloc_context3(codec);
-			if (codecContext == null) throw new Exception("无法分配编码器上下文");
+            InFormat=format;
+            Init(encoderParams);
+        }
 
-			InFormat = format;
-			Init(encoderParams);
-		}
+        public VideoEncoder(AVCodecID codecID, VideoFormat format, VideoEncoderParameters encoderParams = null) : base(codecID)
+        {
+            encoderParams=encoderParams??VideoEncoderParameters.Default;
+            if (codec->Type!=AVMediaType.Video)
+                throw new ArgumentException($"{codecID}不是视频格式", nameof(codecID));
 
-		internal VideoEncoder(AVStream* stream, VideoFormat format, VideoEncoderParameters encoderParams = null) : base(stream) {
+            codecContext=FF.avcodec_alloc_context3(codec);
+            if (codecContext==null) throw new Exception("无法分配编码器上下文");
+
+            InFormat=format;
+            Init(encoderParams);
+        }
+
+        internal VideoEncoder(AVStream* stream, VideoFormat format, VideoEncoderParameters encoderParams = null) : base(stream) {
 			encoderParams = encoderParams ?? VideoEncoderParameters.Default;
 
 			InFormat = format;

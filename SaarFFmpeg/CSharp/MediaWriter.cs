@@ -227,7 +227,7 @@ namespace Saar.FFmpeg.CSharp {
 		//	}
 		//}
 
-		private void Encode(Encoder encoder, Frame frame) {
+		public void Encode(Encoder encoder, Frame frame) {
 			if (encoder.Encode(frame, packet)) {
 				InternalWrite(packet);
 			}
@@ -274,9 +274,10 @@ namespace Saar.FFmpeg.CSharp {
 
 		public void Write(Frame frame) {
 			if (readyEncoders == null || encoders.Count == 0) throw new InvalidOperationException($"该{nameof(MediaWriter)}对象未初始化或已释放");
-			if (encoders.Count != 1) throw new InvalidOperationException($"该{nameof(MediaWriter)}对象包含一个以上的编码流，因此不能调用此方法");
+			//if (encoders.Count != 1) throw new InvalidOperationException($"该{nameof(MediaWriter)}对象包含一个以上的编码流，因此不能调用此方法");
 
-			var encoder = encoders[0];
+			Encoder encoder=frame is AudioFrame ? (Encoder)encoders.OfType<AudioEncoder>().First(): encoders.OfType<VideoEncoder>().First();
+
 			Encode(encoder, frame);
 		}
 
