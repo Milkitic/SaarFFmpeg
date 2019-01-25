@@ -10,8 +10,17 @@ namespace Saar.FFmpeg.CSharp {
 	/// </summary>
 	public abstract class DisposableObject : IDisposable {
 		~DisposableObject() {
-			Dispose(false);
-            GC.SuppressFinalize(this);
+            try
+            {
+                Dispose(false);
+            }
+            catch
+            {
+            }
+            finally
+            {
+                GC.SuppressFinalize(this);
+            }
         }
 
 		protected abstract void Dispose(bool disposing);
