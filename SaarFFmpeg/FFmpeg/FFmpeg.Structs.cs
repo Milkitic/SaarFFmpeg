@@ -362,6 +362,8 @@ namespace Saar.FFmpeg.Structs {
 
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct AVDictionary {
+        	int count;
+        	AVDictionaryEntry* elems;
 	}
 
 	/// <summary>
