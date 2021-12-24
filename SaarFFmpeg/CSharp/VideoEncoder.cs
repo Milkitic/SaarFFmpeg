@@ -85,8 +85,13 @@ namespace Saar.FFmpeg.CSharp {
 					codecContext->Qmin = encoderParams.Qmin;
 				if (encoderParams.Qmax != 0)
 					codecContext->Qmax = encoderParams.Qmax;
+				
+				var dic = new AVDictionary();
+				var p = &dic;
+				FF.av_dict_set(&p, "profile", "main", 0);
+				FF.av_dict_set(&p, "preset", "fast", 0);
 
-				var result = FF.avcodec_open2(codecContext, codec, null);
+				var result = FF.avcodec_open2(codecContext, codec, &p);
 				if (result < 0) throw new CSharp.FFmpegException(result);
 			} catch {
 				Dispose();
